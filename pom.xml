@@ -37,6 +37,11 @@
 			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.github.lhogie</groupId>
+			<artifactId>java4unix</artifactId>
+			<version>0.0.2</version>
+		</dependency>
 	</dependencies>
 
 
