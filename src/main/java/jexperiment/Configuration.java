@@ -20,61 +20,50 @@ import toools.io.file.Directory;
 import toools.io.file.RegularFile;
 import toools.math.MathsUtilities;
 
-public class Configuration extends InDirectoryObject
-{
+public class Configuration extends InDirectoryObject {
 	final Function parentFunction;
 	final String id;
 
-	Configuration(Function parentFunction, String id)
-	{
+	Configuration(Function parentFunction, String id) {
 		super(new Directory(parentFunction.configurationsDirectory(), id));
 		this.parentFunction = parentFunction;
 		getDirectory().ensureExists();
 		this.id = id;
 	}
 
-	Configuration(Function parentFunction, Directory d)
-	{
+	Configuration(Function parentFunction, Directory d) {
 		super(d);
 		this.parentFunction = parentFunction;
 		this.id = d.getName();
 	}
 
-	public void addMeasure(double x, double y)
-	{
-		parentFunction.parentPlot.experiment.log("plot",
-				parentFunction.parentPlot.getName(), "function", parentFunction.getName(),
-				"x", x, "y", y, "run", countMeasures());
+	public void addMeasure(double x, double y) {
+		parentFunction.parentPlot.experiment.log("plot", parentFunction.parentPlot.getName(), "function",
+				parentFunction.getName(), "x", x, "y", y, "run", countMeasures());
 		String line = x + "\t" + y + "\n";
 		getDirectory().getChildRegularFile("points").append(line.getBytes());
 	}
 
-	public double computeAverageY(double[] measures)
-	{
+	public double computeAverageY(double[] measures) {
 		return MathsUtilities.avg(measures);
 	}
 
-	public static class Entry
-	{
+	public static class Entry {
 		double x, y, stdDev;
 	}
 
-	public static class Point
-	{
+	public static class Point {
 		double x, y;
 	}
 
-	public List<Point> collectMeasures()
-	{
+	public List<Point> collectMeasures() {
 		RegularFile pointFile = getDirectory().getChildRegularFile("points");
 
-		if (pointFile.exists())
-		{
+		if (pointFile.exists()) {
 			List<String> lines = pointFile.getLines();
 			List<Point> points = new ArrayList<>(lines.size());
 
-			for (String line : lines)
-			{
+			for (String line : lines) {
 				int tab = line.indexOf('\t');
 				Point p = new Point();
 				p.x = Double.valueOf(line.substring(0, tab)).doubleValue();
@@ -83,21 +72,17 @@ public class Configuration extends InDirectoryObject
 			}
 
 			return points;
-		}
-		else
-		{
+		} else {
 			return Collections.EMPTY_LIST;
 		}
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "config " + id;
 	}
 
-	public int countMeasures()
-	{
+	public int countMeasures() {
 		return collectMeasures().size();
 	}
 }
