@@ -38,8 +38,8 @@ public class Configuration extends InDirectoryObject {
 	}
 
 	public void addMeasure(double x, double y) {
-		parentFunction.parentPlot.experiment.log("plot", parentFunction.parentPlot.getName(), "function",
-				parentFunction.getName(), "x", x, "y", y, "run", countMeasures());
+		//parentFunction.parentPlot.experiment.log("plot", parentFunction.parentPlot.getName(), "function",
+	//			parentFunction.getName(), "x", x, "y", y, "run", countMeasures());
 		String line = x + "\t" + y + "\n";
 		getDirectory().getChildRegularFile("points").append(line.getBytes());
 	}

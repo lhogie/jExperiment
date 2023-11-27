@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
-import jexperiment.Experiment;
+import jexperiment.Plots;
 import jexperiment.Function;
 import jexperiment.GNUPlot;
 import jexperiment.Plot;
@@ -16,63 +16,51 @@ import toools.StopWatch.UNIT;
 import toools.io.file.Directory;
 import toools.reflect.Clazz;
 
-public class ListBenchmark
-{
-	interface ListInserter
-	{
+public class ListBenchmark {
+	interface ListInserter {
 		void insertInList(List l, Random r);
 
 		String getName();
 	}
 
-	public static void main(String[] args) throws IOException
-	{
-		Experiment e = new Experiment(new Directory("Linked list vs. Array list"));
+	public static void main(String[] args) throws IOException {
+		Plots e = new Plots(new Directory("Linked list vs. Array list"));
 		Random r = new Random();
 
-		ListInserter randomInserter = new ListInserter()
-		{
+		ListInserter randomInserter = new ListInserter() {
 			@Override
-			public void insertInList(List l, Random r)
-			{
+			public void insertInList(List l, Random r) {
 				int index = r.nextInt(l.size());
 				l.add(index, l);
 			}
 
 			@Override
-			public String getName()
-			{
+			public String getName() {
 				return "insert at random position";
 			}
 		};
 
-		ListInserter endInserter = new ListInserter()
-		{
+		ListInserter endInserter = new ListInserter() {
 			@Override
-			public void insertInList(List l, Random r)
-			{
+			public void insertInList(List l, Random r) {
 				l.add(l);
 			}
 
 			@Override
-			public String getName()
-			{
+			public String getName() {
 				return "insert at the end (append)";
 			}
 
 		};
 
-		ListInserter startInserter = new ListInserter()
-		{
+		ListInserter startInserter = new ListInserter() {
 			@Override
-			public void insertInList(List l, Random r)
-			{
+			public void insertInList(List l, Random r) {
 				l.add(0, l);
 			}
 
 			@Override
-			public String getName()
-			{
+			public String getName() {
 				return "insert at the beginning";
 			}
 
@@ -83,29 +71,23 @@ public class ListBenchmark
 		insertionMethods.add(startInserter);
 		insertionMethods.add(endInserter);
 
-		for (ListInserter i : insertionMethods)
-		{
+		for (ListInserter i : insertionMethods) {
 			Plot p = e.createPlot(i.getName(), "size", "time (ns)");
 
-			for (Class clazz : new Class[] { ArrayList.class, Vector.class,
-					LinkedList.class })
-			{
+			for (Class clazz : new Class[] { ArrayList.class, Vector.class, LinkedList.class }) {
 				Function c = p.createFunction(clazz.getName());
 
 				// try list from 10 to 10^6 elements
-				for (int n = 10; n <= 1000000; n *= 2)
-				{
+				for (int n = 10; n <= 1000000; n *= 2) {
 					// runs 10 runs for a better statistical confidence
-					for (int run = c.configuration("" + n)
-							.countMeasures(); run <= 10; ++run)
-					{
+					for (int run = c.instances("" + n).countMeasures(); run <= 10; ++run) {
 						// creates the list
 						List l = createNSizeList(clazz, n);
 
 						// compute the duration of the operation
 						StopWatch sw = new StopWatch(UNIT.ns);
 						i.insertInList(l, r);
-						c.configuration("" + n).addMeasure(n, sw.getElapsedTime());
+						c.instances("" + n).addMeasure(n, sw.getElapsedTime());
 					}
 				}
 			}
@@ -114,12 +96,10 @@ public class ListBenchmark
 		new GNUPlot().plot(e);
 	}
 
-	private static List createNSizeList(Class c, int n)
-	{
+	private static List createNSizeList(Class c, int n) {
 		List l = (List) Clazz.makeInstance(c);
 
-		while (l.size() < n)
-		{
+		while (l.size() < n) {
 			l.add(l);
 		}
 

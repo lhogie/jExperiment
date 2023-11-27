@@ -2,14 +2,14 @@ package jexperiment.cmd;
 
 import java.io.IOException;
 
-import jexperiment.Experiment;
+import jexperiment.Plots;
 import toools.io.file.Directory;
 
 public class plot
 {
 	public static void main(String[] args) throws IOException
 	{
-		Experiment e = new Experiment(new Directory(args[0]));
+		Plots e = new Plots(new Directory(args[0]));
 		e.display();
 	}
 }

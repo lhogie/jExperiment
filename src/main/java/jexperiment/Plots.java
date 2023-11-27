@@ -17,25 +17,21 @@ import java.util.function.Consumer;
 
 import toools.io.file.Directory;
 
-public class Experiment extends InDirectoryObject
-{
-	public Experiment(Directory directory)
-	{
+public class Plots extends InDirectoryObject {
+	
+	public Plots(Directory directory) {
 		super(directory);
 	}
 
-	public void display() throws IOException
-	{
+	public void display() throws IOException {
 		forEachPlot(p -> p.display());
 	}
 
-	public void log(String s)
-	{
+	public void log(String s) {
 		System.out.println("jExperiment - " + s);
 	}
 
-	public void log(Object... p)
-	{
+	public void log(Object... p) {
 		if (p.length % 2 == 1)
 			throw new IllegalArgumentException(
 					"the format of parameters is: \"name\", value, \"name2\", value2, ..., \"nameN\", valueN");
@@ -43,38 +39,31 @@ public class Experiment extends InDirectoryObject
 		StringBuilder b = new StringBuilder();
 		b.append("# executing ");
 
-		for (int i = 0; i < p.length; i += 2)
-		{
+		for (int i = 0; i < p.length; i += 2) {
 			b.append("\t" + p[i] + "=" + p[i + 1]);
 		}
 
 		log(b.toString());
 	}
 
-	public void forEachPlot(Consumer<Plot> c)
-	{
+	public void forEachPlot(Consumer<Plot> c) {
 		getDirectory().listDirectories().forEach(d -> c.accept(new Plot(this, d)));
 	}
 
-	public void clear()
-	{
+	public void clear() {
 		log("clearing results");
 		super.clear();
 	}
 
-	public Plot createPlot(String title, String xLegend, String yLegend)
-	{
+	public Plot createPlot(String title, String xLegend, String yLegend) {
 		return new Plot(this, title, xLegend, yLegend);
 	}
 
-	public void gnuplot(boolean data, boolean plot, double samplingProbability,
-			boolean printStdDev, AVGMODE avg, String defaultStyle)
-	{
-		if ( ! getDirectory().exists())
-			throw new IllegalStateException(
-					"directory does not exist: " + getDirectory());
+	public void gnuplot(boolean data, boolean plot, double samplingProbability, boolean printStdDev, AVGMODE avg,
+			String defaultStyle) {
+		if (!getDirectory().exists())
+			throw new IllegalStateException("directory does not exist: " + getDirectory());
 
-		forEachPlot(p -> new GNUPlot().plot(p, data, plot, samplingProbability,
-				printStdDev, avg, defaultStyle));
+		forEachPlot(p -> new GNUPlot().plot(p, data, plot, samplingProbability, printStdDev, avg, defaultStyle));
 	}
 }

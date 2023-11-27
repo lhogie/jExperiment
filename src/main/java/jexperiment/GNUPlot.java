@@ -23,57 +23,43 @@ import toools.io.Cout;
 import toools.io.file.RegularFile;
 import toools.math.MathsUtilities;
 
-public class GNUPlot extends Plotter
-{
-	public static String CMD = "gnuplot";
+public class GNUPlot extends Plotter {
+	public static String path = "gnuplot";
 
 	@Override
-	public RegularFile plot(Plot p)
-	{
+	public RegularFile plot(Plot p) {
 		return plot(p, true, true, 1, true, AVGMODE.IterativeMean, "linespoints");
 	}
 
-	public RegularFile plot(Plot plot, boolean data, boolean executeGNUPlot,
-			double samplingProbability, boolean printStdDev, AVGMODE avg,
-			String defaultStyle)
-	{
+	public RegularFile plot(Plot plot, boolean data, boolean executeGNUPlot, double samplingProbability,
+			boolean printStdDev, AVGMODE avg, String defaultStyle) {
 		// GNUPlot.CMD = "/opt/local/bin/gnuplot";
 
-		RegularFile pdfFile = new RegularFile(plot.getDirectory(),
-				plot.getName() + ".pdf");
+		RegularFile pdfFile = new RegularFile(plot.getDirectory(), plot.getName() + ".pdf");
 
-		if (data)
-		{
+		if (data) {
 			plot.collectFunctions().forEach(f -> {
-				plot.experiment.log(
-						"creating GNUPlot DAT file for function \"" + f.getName() + '"');
-				getDataFile(f).setContent(
-						toGNUPlotData(f, printStdDev, samplingProbability, avg)
-								.getBytes());
+				plot.experiment.log("creating GNUPlot DAT file for function \"" + f.getName() + '"');
+				getDataFile(f).setContent(toGNUPlotData(f, printStdDev, samplingProbability, avg).getBytes());
 			});
 		}
 
-		if (executeGNUPlot)
-		{
-			RegularFile cmdFile = new RegularFile(plot.getDirectory(),
-					plot.getName() + ".gnuplot");
+		if (executeGNUPlot) {
+			RegularFile cmdFile = new RegularFile(plot.getDirectory(), plot.getName() + ".gnuplot");
 			cmdFile.setContent(toGNUPlotCommands(plot, pdfFile, defaultStyle).getBytes());
 			Cout.debugSuperVisible(cmdFile.getContentAsText());
 			plot.experiment.log("running GNUPlot");
-			Proces.exec(CMD, cmdFile.getPath());
+			Proces.exec(path + "/gnuplot", cmdFile.getPath());
 		}
 
 		return pdfFile;
 	}
 
-	private RegularFile getDataFile(Function c)
-	{
+	private RegularFile getDataFile(Function c) {
 		return new RegularFile(c.getDirectory(), c.getName() + ".dat");
 	}
 
-	public String toGNUPlotData(Function f, boolean stdDev, double samplingProbability,
-			AVGMODE mode)
-	{
+	public String toGNUPlotData(Function f, boolean stdDev, double samplingProbability, AVGMODE mode) {
 		StringBuilder s = new StringBuilder();
 		s.append("# " + f.getName() + "\n\n");
 		Double2ObjectMap<DoubleList> x2y = f.toXY();
@@ -81,17 +67,14 @@ public class GNUPlot extends Plotter
 		double[] allX = new DoubleArrayList(x2y.keySet()).toDoubleArray();
 		Arrays.sort(allX);
 
-		for (double x : allX)
-		{
-			if (Math.random() < samplingProbability)
-			{
+		for (double x : allX) {
+			if (Math.random() < samplingProbability) {
 				s.append(x);
 				s.append('\t');
 				double[] ys = x2y.get(x).toDoubleArray();
 				s.append(mode.compute(ys));
 
-				if (stdDev)
-				{
+				if (stdDev) {
 					s.append('\t');
 					s.append(MathsUtilities.stdDev(ys));
 				}
@@ -103,8 +86,7 @@ public class GNUPlot extends Plotter
 		return s.toString();
 	}
 
-	private String toGNUPlotCommands(Plot plot, RegularFile pdfFile, String defaultStyle)
-	{
+	private String toGNUPlotCommands(Plot plot, RegularFile pdfFile, String defaultStyle) {
 		if (plot == null)
 			throw new NullPointerException();
 
@@ -115,13 +97,11 @@ public class GNUPlot extends Plotter
 		b.append("set xlabel \"" + plot.getXLegend().trim() + "\"\n");
 		b.append("set ylabel \"" + plot.getYLegend().trim() + "\"\n");
 
-		if (plot.getXRange() != null)
-		{
+		if (plot.getXRange() != null) {
 			b.append("set xrange " + plot.getXRange().toGNUPlot() + "\n");
 		}
 
-		if (plot.getYRange() != null)
-		{
+		if (plot.getYRange() != null) {
 			b.append("set yrange " + plot.getYRange().toGNUPlot() + "\n");
 		}
 
@@ -133,10 +113,8 @@ public class GNUPlot extends Plotter
 
 		List<Function> functions = plot.collectFunctions();
 
-		for (int i = 0; i < functions.size(); ++i)
-		{
-			if (i > 0)
-			{
+		for (int i = 0; i < functions.size(); ++i) {
+			if (i > 0) {
 				b.append(", ");
 			}
 
@@ -145,8 +123,7 @@ public class GNUPlot extends Plotter
 
 			if (style == null)
 				style = defaultStyle;
-			b.append('"' + getDataFile(f).getPath() + "\" with " + style + " title \""
-					+ f.getName() + "\"");
+			b.append('"' + getDataFile(f).getPath() + "\" with " + style + " title \"" + f.getName() + "\"");
 		}
 
 		return b.toString();

@@ -2,7 +2,7 @@ package jexperiment.cmd;
 
 import j4u.CommandLine;
 import jexperiment.AVGMODE;
-import jexperiment.Experiment;
+import jexperiment.Plots;
 import toools.io.file.Directory;
 import toools.io.file.RegularFile;
 
@@ -24,7 +24,7 @@ public class gnuplot extends jexperiment {
 	@Override
 	public int runScript(CommandLine cmdLine) throws Throwable {
 		Directory d = new Directory(cmdLine.findParameters().get(0));
-		Experiment e = new Experiment(d);
+		Plots e = new Plots(d);
 		boolean data = !isOptionSpecified(cmdLine, "--nodata");
 		boolean plot = !isOptionSpecified(cmdLine, "--noplot");
 		double samplingProbability = Double.valueOf(getOptionValue(cmdLine, "--samplingProbability"));

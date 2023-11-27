@@ -23,58 +23,47 @@ import it.unimi.dsi.fastutil.doubles.DoubleList;
 import jexperiment.Configuration.Point;
 import toools.io.file.Directory;
 
-public class Function extends InDirectoryObject
-{
+public class Function extends InDirectoryObject {
 	final public Plot parentPlot;
 
-	Function(String name, Plot parentPlot)
-	{
+	Function(String name, Plot parentPlot) {
 		super(new Directory(parentPlot.getFunctionsDirectory(), name));
 		this.parentPlot = parentPlot;
 		configurationsDirectory().ensureExists();
 		setUseErrorBars(true);
 	}
 
-	Function(Plot parentPlot, Directory d)
-	{
+	Function(Plot parentPlot, Directory d) {
 		super(d);
 		this.parentPlot = parentPlot;
 	}
 
-	public boolean showStandardDeviation()
-	{
+	public boolean showStandardDeviation() {
 		return readBoolean("use_error_bars");
 	}
 
-	public void setUseErrorBars(boolean useErrorBars)
-	{
+	public void setUseErrorBars(boolean useErrorBars) {
 		writeBoolean("use_error_bars", useErrorBars);
 	}
 
-	public List<Configuration> collectConfigurations()
-	{
+	public List<Configuration> collectConfigurations() {
 		List<Configuration> configs = new ArrayList<>();
-		configurationsDirectory().listDirectories()
-				.forEach(d -> configs.add(new Configuration(this, d)));
+		configurationsDirectory().listDirectories().forEach(d -> configs.add(new Configuration(this, d)));
 		return configs;
 	}
 
-	public Directory configurationsDirectory()
-	{
+	public Directory configurationsDirectory() {
 		return new Directory(getDirectory(), "configs");
 	}
 
-	public Double2ObjectMap<DoubleList> toXY()
-	{
+	public Double2ObjectMap<DoubleList> toXY() {
 		Double2ObjectMap<DoubleList> x2y = new Double2ObjectOpenHashMap<>();
 
 		collectConfigurations().forEach(c -> {
-			for (Point p : c.collectMeasures())
-			{
+			for (Point p : c.collectMeasures()) {
 				DoubleList yList = x2y.get(p.x);
 
-				if (yList == null)
-				{
+				if (yList == null) {
 					x2y.put(p.x, yList = new DoubleArrayList());
 				}
 
@@ -85,28 +74,23 @@ public class Function extends InDirectoryObject
 		return x2y;
 	}
 
-	public String getGNUPlotStyle()
-	{
+	public String getGNUPlotStyle() {
 		return readString("style");
 	}
 
-	public void setSyle(String s)
-	{
+	public void setSyle(String s) {
 		writeString("style", s);
 	}
 
-	public Color getColor()
-	{
+	public Color getColor() {
 		return readColor("color");
 	}
 
-	public void setColor(Color color)
-	{
+	public void setColor(Color color) {
 		writeColor("color", color);
 	}
 
-	public Configuration configuration(String id)
-	{
+	public Configuration instances(String id) {
 		return new Configuration(this, id);
 	}
 

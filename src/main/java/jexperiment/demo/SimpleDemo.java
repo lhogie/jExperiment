@@ -2,7 +2,7 @@ package jexperiment.demo;
 
 import jexperiment.AVGMODE;
 import jexperiment.Configuration;
-import jexperiment.Experiment;
+import jexperiment.Plots;
 import jexperiment.Function;
 import jexperiment.GNUPlot;
 import jexperiment.Plot;
@@ -10,12 +10,12 @@ import toools.io.file.Directory;
 
 public class SimpleDemo {
 	public static void main(String[] args) {
-		Experiment exp = new Experiment(new Directory("$HOME/simpleDemo"));
+		Plots exp = new Plots(new Directory("$HOME/simpleDemo"));
 		Plot plot = exp.createPlot("append to string", "string length", "time");
 		Function fct = plot.createFunction("string");
 
 		for (double length = 1000000; length > 100; length /= 1.2) {
-			Configuration config = fct.configuration("len=" + length);
+			Configuration config = fct.instances("len=" + length);
 
 			// we do 5 runs
 			while (config.countMeasures() < 5) {
