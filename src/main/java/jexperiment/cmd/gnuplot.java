@@ -1,24 +1,15 @@
 package jexperiment.cmd;
 
 import j4u.CommandLine;
+import j4u.CommandLineSpecification;
 import jexperiment.AVGMODE;
 import jexperiment.Plots;
 import toools.io.file.Directory;
-import toools.io.file.RegularFile;
 
 public class gnuplot extends jexperiment {
-	public gnuplot(RegularFile launcher) {
-		super(launcher);
-		addOption("--nodata", null, null, null, "Do NOT (re)generates DAT files");
-		addOption("--noplot", null, null, null, "Do NOT (re-)generates image files");
-		addOption("--samplingProbability", "-p", ".*", "1", "samplingProbability");
-		addOption("--showStandardDeviation", "-d", ".*", "1", "samplingProbability");
-		addOption("--avgMode", "-a", "mean|median", "mean", "averaging method");
-		addOption("--defaultStyle", "-s", ".*", "linespoints", "default GNUPlot plotting style");
-	}
 
 	public static void main(String[] args) throws Throwable {
-		new gnuplot(null).run(args);
+		new gnuplot().run(args);
 	}
 
 	@Override
@@ -34,5 +25,16 @@ public class gnuplot extends jexperiment {
 
 		e.gnuplot(data, plot, samplingProbability, stddev, avg, defaultStyle);
 		return 0;
+	}
+
+	@Override
+	protected void specifyCmdLine(CommandLineSpecification spec) {
+		spec.addOption("--nodata", null, null, null, "Do NOT (re)generates DAT files");
+		spec.addOption("--noplot", null, null, null, "Do NOT (re-)generates image files");
+		spec.addOption("--samplingProbability", "-p", ".*", "1", "samplingProbability");
+		spec.addOption("--showStandardDeviation", "-d", ".*", "1", "samplingProbability");
+		spec.addOption("--avgMode", "-a", "mean|median", "mean", "averaging method");
+		spec.addOption("--defaultStyle", "-s", ".*", "linespoints", "default GNUPlot plotting style");
+
 	}
 }

@@ -12,9 +12,23 @@
 
 package jexperiment.cmd;
 
-import j4u.Command;
+import j4u.License;
 
-public abstract class jexperiment extends Command {
+public abstract class Application extends j4u.Application {
+	@Override
+	public String getAuthor() {
+		return "Luc Hogie";
+	}
+
+	@Override
+	public License getLicence() {
+		return License.ApacheV2;
+	}
+
+	@Override
+	public String getYear() {
+		return "2001-2020";
+	}
 
 	@Override
 	public String getDescription() {
