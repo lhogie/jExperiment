@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>io.github.lhogie</groupId>
 			<artifactId>toools</artifactId>
-			<version>0.0.6.1</version>
+			<version>[0.0.0,)</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>io.github.lhogie</groupId>
 			<artifactId>java4unix</artifactId>
-			<version>0.0.2</version>
+			<version>[0.0.0,)</version>
 		</dependency>
 	</dependencies>
 
